@@ -1,0 +1,55 @@
+###
+### Populate DB
+POST{{URL}}/populate
+###
+
+### Get all trips
+GET{{URL}}
+###
+
+### Get trip by ID
+GET{{URL}}/27
+###
+
+### Create new trip
+POST{{URL}}
+Content-Type: application/json
+
+{
+  "starttime": "2024-12-01T10:00:00",
+  "endtime": "2024-12-01T12:00:00",
+  "startposition": "Beach Point",
+  "name": "Beach Adventure",
+  "price": 100.0,
+  "category": "BEACH"
+}
+###
+
+### Update trip
+PUT{{URL}}/27
+Content-Type: application/json
+
+{
+  "starttime": "2024-12-01T10:00:00",
+  "endtime": "2024-12-01T12:00:00",
+  "startposition": "Beach Point",
+  "name": "Updated Beach Adventure",
+  "price": 120.0,
+  "category": "BEACH"
+}
+###
+
+### Delete trip
+DELETE{{URL}}/1
+###
+
+### Add guide to trip
+PUT{{URL}}/27/guides/2
+###
+
+### Get trips by category/Only one that doesn't work
+GET{{URL}}/category-filter?category="BEACH"
+###
+
+### Get total price by guide
+GET{{URL}}/guides/totalprice
