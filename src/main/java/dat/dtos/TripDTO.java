@@ -30,5 +30,6 @@ public class TripDTO {
         this.name = trip.getName();
         this.price = trip.getPrice();
         this.category = trip.getCategory();
-        this.guideId = (trip.getGuide() != null) ? trip.getGuide().getId() : null;    }
+        this.guideId = (trip.getGuide() != null) ? trip.getGuide().getId() : null;
+    }
 }

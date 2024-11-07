@@ -1,9 +1,7 @@
 package dat.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dat.routes.Routes;
 import dat.security.controllers.AccessController;
-import dat.security.controllers.SecurityController;
 import dat.exceptions.ApiException;
 import dat.security.routes.SecurityRoutes;
 import dat.utils.Utils;
@@ -16,8 +14,6 @@ import org.slf4j.LoggerFactory;
 public class AppConfig {
 
     private static Routes routes = new Routes();
-    private static ObjectMapper jsonMapper = new Utils().getObjectMapper();
-    private static SecurityController securityController = SecurityController.getInstance();
     private static AccessController accessController = new AccessController();
     private static Logger logger = LoggerFactory.getLogger(AppConfig.class);
 

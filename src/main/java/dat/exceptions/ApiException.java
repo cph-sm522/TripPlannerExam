@@ -12,5 +12,4 @@ public class ApiException extends Exception{
     public int getStatusCode() {
         return statusCode;
     }
-
 }

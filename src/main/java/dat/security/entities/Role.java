@@ -15,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 @NamedQueries(@NamedQuery(name = "Role.deleteAllRows", query = "DELETE from Role"))
+
 public class Role implements Serializable {
 
     @Serial

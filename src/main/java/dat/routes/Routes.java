@@ -13,5 +13,4 @@ public class Routes {
             path("/", tripRoutes.getTripRoutes());
         };
     }
-
 }

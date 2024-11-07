@@ -2,21 +2,21 @@ package dat.controllers;
 
 import dat.dtos.TripDTO;
 import dat.daos.TripDAO;
-import dat.enums.Category;
 import dat.exceptions.ApiException;
 import io.javalin.http.Context;
 import jakarta.persistence.EntityManagerFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TripController {
 
     private final TripDAO tripDAO;
+    private final Populator populator;
 
     public TripController(EntityManagerFactory emf) {
         this.tripDAO = new TripDAO(emf);
+        this.populator = new Populator(emf);
     }
 
     public void getAll(Context ctx) throws ApiException {
@@ -40,7 +40,7 @@ public class TripController {
         Long id = Long.parseLong(ctx.pathParam("id"));
         TripDTO tripDTO = ctx.bodyAsClass(TripDTO.class);
         tripDAO.update(id, tripDTO);
-        ctx.status(204);
+        ctx.status(204).json(tripDTO);
     }
 
     public void delete(Context ctx) throws ApiException {
@@ -54,31 +54,13 @@ public class TripController {
         Long tripId = Long.parseLong(ctx.pathParam("tripId"));
         Long guideId = Long.parseLong(ctx.pathParam("guideId"));
         tripDAO.addGuideToTrip(tripId, guideId);
-        ctx.status(204);
+        TripDTO tripDTO = tripDAO.getById(tripId);
+        ctx.status(204).json(tripDTO);
     }
 
     public void populate(Context ctx) {
-        Populator.populateData();
-        ctx.status(201).json("{\"message\": \"Database populated with sample trips and guides\"}");
-    }
-
-    public void getTripsByCategory(Context ctx) throws ApiException {
-        String categoryParam = ctx.queryParam("category");
-        System.out.println("Received categoryParam: " + categoryParam); // Debugging line
-        if (categoryParam == null) {
-            throw new ApiException(400, "Category query parameter is required");
-        }
-        Category category;
-        try {
-            category = Category.valueOf(categoryParam.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ApiException(400, "Invalid category");
-        }
-
-        List<TripDTO> trips = tripDAO.getAll().stream()
-                .filter(trip -> trip.getCategory() == category)
-                .collect(Collectors.toList());
-        ctx.json(trips);
+        populator.populateData();
+        ctx.status(201).json("{\"message\": \"Database populated with trips and guides\"}");
     }
 
     public void getTotalPriceByGuide(Context ctx) throws ApiException {

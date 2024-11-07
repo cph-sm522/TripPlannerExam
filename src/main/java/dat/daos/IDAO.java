@@ -1,6 +1,5 @@
 package dat.daos;
 
-import dat.dtos.GuideDTO;
 import dat.exceptions.ApiException;
 
 import java.util.List;

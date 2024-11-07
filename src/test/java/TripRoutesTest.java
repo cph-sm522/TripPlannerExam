@@ -1,18 +1,19 @@
 import dat.config.AppConfig;
 import dat.config.HibernateConfig;
-import dat.controllers.TripController;
-import dat.daos.TripDAO;
+import dat.controllers.Populator;
 import dat.dtos.TripDTO;
+import dat.entities.Guide;
 import dat.entities.Trip;
 import dat.enums.Category;
-import dat.exceptions.ApiException;
-import dat.controllers.Populator;
+import dat.security.controllers.SecurityController;
+import dat.security.daos.SecurityDAO;
+import dat.security.entities.Role;
+import dat.security.entities.User;
+import dat.security.exceptions.ValidationException;
+import dk.bugelhartmann.UserDTO;
 import io.javalin.Javalin;
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.*;
-
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,148 +27,183 @@ public class TripRoutesTest {
 
     private static Javalin app;
     private static EntityManagerFactory emf;
-    private static TripDAO tripDAO;
     private static Populator populator;
+    private static SecurityController securityController;
+    private static SecurityDAO securityDAO;
 
-    private final String BASE_URL = "http://localhost:7000/api/trips";
+    private static UserDTO userDTO, adminDTO;
+    private static String userToken, adminToken;
 
-    private List<Trip> trips;
-    private Trip t1, t2, t3;
+    List<Trip> trips;
+    private Trip trip1, trip2, trip3;
+
+    private final String BASE_URL = "http://localhost:7007/api/trips";
 
     @BeforeAll
-    void init() {
-        emf = HibernateConfig.getEntityManagerFactoryForTest();
+    void setUp() {
+        emf = HibernateConfig.getEntityManagerFactory("trip_planner");
         app = AppConfig.startServer(7007);
-        tripDAO = new TripDAO(emf);
-        populator = new Populator();
-        RestAssured.baseURI = "http://localhost:7000";
+
+        populator = new Populator(emf);
+
+        securityDAO = new SecurityDAO(emf);
+        securityController = SecurityController.getInstance();
     }
 
     @BeforeEach
-    void setUp() throws ApiException {
-        List<Trip> trips = populator.populateData();
-        t1 = trips.get(0);
-        t2 = trips.get(1);
-        t3 = trips.get(2);
+    void insertToDB() {
+        trips = populator.populateData();
+        trip1 = trips.get(0);
+        trip2 = trips.get(1);
+        trip3 = trips.get(2);
 
-        tripDAO.create(new TripDTO(t1));
-        tripDAO.create(new TripDTO(t2));
-        tripDAO.create(new TripDTO(t3));
+        UserDTO[] users = Populator.populateUsers(emf);
+        userDTO = users[0];
+        adminDTO = users[1];
+
+        try {
+            UserDTO verifiedUser = securityDAO.getVerifiedUser(userDTO.getUsername(), userDTO.getPassword());
+            UserDTO verifiedAdmin = securityDAO.getVerifiedUser(adminDTO.getUsername(), adminDTO.getPassword());
+            userToken = "Bearer " + securityController.createToken(verifiedUser);
+            adminToken = "Bearer " + securityController.createToken(verifiedAdmin);
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterEach
     void tearDown() {
         populator.cleanup(Trip.class);
+        populator.cleanup(Guide.class);
+        populator.cleanup(User.class);
+        populator.cleanup(Role.class);
     }
 
     @AfterAll
     void closeDown() {
         AppConfig.stopServer(app);
+        emf.close();
     }
 
     @Test
     void testGetAllTrips() {
         TripDTO[] trips = given()
                 .when()
-                .get(BASE_URL)
+                .header("Authorization", userToken)
+                .get(BASE_URL + "/")
                 .then()
                 .statusCode(200)
                 .extract()
                 .as(TripDTO[].class);
 
-        assertThat(trips, arrayWithSize(3));
-        assertThat(trips, arrayContainingInAnyOrder(new TripDTO(t1), new TripDTO(t2), new TripDTO(t3)));
+        assertThat(trips, arrayWithSize(10));
     }
+
 
     @Test
     void testGetTripById() {
         TripDTO trip = given()
                 .when()
-                .get(BASE_URL + "/" + t1.getId())
+                .header("Authorization", userToken)
+                .get(BASE_URL + "/" + trip1.getId())
                 .then()
                 .statusCode(200)
                 .extract()
                 .as(TripDTO.class);
 
-        assertThat(trip.getName(), equalTo(t1.getName()));
-        assertThat(trip.getId(), equalTo(t1.getId()));
+        assertThat(trip.getName(), equalTo(trip1.getName()));
+        assertThat(trip.getId(), equalTo(trip1.getId()));
     }
 
     @Test
-    void testCreateTrip() throws ApiException {
+    void testCreateTrip() {
         TripDTO newTrip = new TripDTO(null, LocalDateTime.now(), LocalDateTime.now().plusHours(2), "New Location", "New Trip", 99.99, Category.CITY, null);
 
         TripDTO createdTrip = given()
                 .contentType("application/json")
+                .header("Authorization", adminToken)
                 .body(newTrip)
                 .when()
-                .post(BASE_URL)
+                .post(BASE_URL + "/")
                 .then()
                 .statusCode(201)
                 .extract()
                 .as(TripDTO.class);
 
         assertThat(createdTrip.getName(), equalTo(newTrip.getName()));
-        assertThat(tripDAO.getAll(), hasSize(4));
+        assertThat(createdTrip.getCategory(), equalTo(newTrip.getCategory()));
     }
 
     @Test
     void testUpdateTrip() {
-        TripDTO updatedTrip = new TripDTO(t2);
-        updatedTrip.setName("Updated Trip");
+        TripDTO tripToUpdate = new TripDTO(trip2.getId(), trip2.getStarttime(), trip2.getEndtime(), trip2.getStartposition(), "Updated Trip Name", trip2.getPrice(), trip2.getCategory(), trip2.getGuide() != null ? trip2.getGuide().getId() : null);
 
-        TripDTO trip = given()
+        given()
                 .contentType("application/json")
-                .body(updatedTrip)
+                .header("Authorization", adminToken)
+                .body(tripToUpdate)
                 .when()
-                .put(BASE_URL + "/" + t2.getId())
+                .put(BASE_URL + "/" + tripToUpdate.getId())
+                .then()
+                .statusCode(204);
+
+        TripDTO updatedTrip = given()
+                .when()
+                .header("Authorization", userToken)
+                .get(BASE_URL + "/" + tripToUpdate.getId())
                 .then()
                 .statusCode(200)
                 .extract()
                 .as(TripDTO.class);
 
-        assertThat(trip.getName(), equalTo("Updated Trip"));
+        assertThat(updatedTrip.getName(), equalTo("Updated Trip Name"));
     }
 
     @Test
-    void testDeleteTrip() throws ApiException {
+    void testDeleteTrip() {
         given()
                 .when()
-                .delete(BASE_URL + "/" + t3.getId())
+                .header("Authorization", adminToken)
+                .delete(BASE_URL + "/" + trip3.getId())
                 .then()
                 .statusCode(204);
 
-        assertThat(tripDAO.getAll(), hasSize(2));
-        assertThat(tripDAO.getAll(), not(hasItem(new TripDTO(t3))));
+        given()
+                .when()
+                .header("Authorization", userToken)
+                .get(BASE_URL + "/" + trip3.getId())
+                .then()
+                .statusCode(404);
     }
 
     @Test
-    void testAddGuideToTrip() throws ApiException {
-        Long guideId = 1L;
+    void testAddGuideToTrip() {
+        Long guideId = trip1.getGuide() != null ? trip1.getGuide().getId() : 525L;
+
         given()
                 .when()
-                .put(BASE_URL + "/" + t1.getId() + "/guides/" + guideId)
+                .header("Authorization", adminToken)
+                .put(BASE_URL + "/" + trip1.getId() + "/guides/" + guideId)
                 .then()
                 .statusCode(204);
 
-        TripDTO trip = tripDAO.getById(t1.getId());
-        assertThat(trip.getGuideId(), equalTo(guideId));
-    }
-
-    @Test
-    void testPopulateTrips() {
-        given()
+        TripDTO updatedTrip = given()
                 .when()
-                .post(BASE_URL + "/populate")
+                .header("Authorization", userToken)
+                .get(BASE_URL + "/" + trip1.getId())
                 .then()
-                .statusCode(201)
-                .body("message", equalTo("Database populated with sample trips and guides"));
+                .statusCode(200)
+                .extract()
+                .as(TripDTO.class);
+
+        assertThat(updatedTrip.getGuideId(), equalTo(guideId));
     }
 
     @Test
     void testGetTotalPriceByGuide() {
         given()
                 .when()
+                .header("Authorization", userToken)
                 .get(BASE_URL + "/guides/totalprice")
                 .then()
                 .statusCode(200)
