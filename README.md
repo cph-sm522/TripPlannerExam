@@ -1,4 +1,4 @@
-# Trip Planning App Exam Project
+# Trip Planning App Project
 
 # Endpoints dokumentation
 
