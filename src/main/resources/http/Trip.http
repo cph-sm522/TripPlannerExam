@@ -49,7 +49,7 @@ Accept: application/json
 Authorization: Bearer {{jwt_token}}
 
 ### Add guide to trip
-PUT{{URL}}/1171/guides/608
+PUT{{URL}}/2564/guides/1291
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{jwt_token}}

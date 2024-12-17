@@ -87,9 +87,6 @@ public class Populator {
             em.merge(trip5);
             em.merge(trip6);
             em.merge(trip7);
-            em.merge(trip8);
-            em.merge(trip9);
-            em.merge(trip10);
 
             em.getTransaction().commit();
 
