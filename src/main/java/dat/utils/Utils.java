@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-
 //Purpose: Utility class to read properties from a file
 public class Utils {
     public static void main(String[] args) {

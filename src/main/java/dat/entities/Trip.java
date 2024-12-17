@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "trip")
 public class Trip {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +30,7 @@ public class Trip {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "guide_id")
+    @JoinColumn(name = "guide_id", nullable = true)
     private Guide guide;
 
     public Trip(TripDTO tripDTO) {

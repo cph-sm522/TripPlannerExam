@@ -1,7 +1,5 @@
-###
 ### Get trip by ID
 GET{{URL}}/45
-###
 
 ### Delete trip
 DELETE{{URL}}/66

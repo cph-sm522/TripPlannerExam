@@ -1,33 +1,38 @@
-###
 ### Populate DB
 POST{{URL}}/populate
-###
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 ### Get all trips
 GET{{URL}}
-###
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 ### Get trip by ID
-GET{{URL}}/27
-###
+GET{{URL}}/1171
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 ### Create new trip
 POST{{URL}}
 Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
-  "starttime": "2024-12-01T10:00:00",
-  "endtime": "2024-12-01T12:00:00",
-  "startposition": "Beach Point",
-  "name": "Beach Adventure",
-  "price": 100.0,
-  "category": "BEACH"
+  "starttime": "2024-12-12T10:00:00",
+  "endtime": "2024-12-12T12:00:00",
+  "startposition": "Copenhagen Central Station",
+  "name": "Walk in Strøget",
+  "price": 200.0,
+  "category": "CITY"
 }
-###
 
 ### Update trip
-PUT{{URL}}/27
+PUT{{URL}}/1543
 Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
   "starttime": "2024-12-01T10:00:00",
@@ -37,19 +42,19 @@ Content-Type: application/json
   "price": 120.0,
   "category": "BEACH"
 }
-###
 
 ### Delete trip
 DELETE{{URL}}/1
-###
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 ### Add guide to trip
-PUT{{URL}}/27/guides/2
-###
-
-### Get trips by category/Only one that doesn't work
-GET{{URL}}/category-filter?category="BEACH"
-###
+PUT{{URL}}/2564/guides/1291
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
 
 ### Get total price by guide
 GET{{URL}}/guides/totalprice
+Accept: application/json
+Authorization: Bearer {{jwt_token}}
