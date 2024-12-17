@@ -84,9 +84,9 @@ public class HibernateConfig {
         return props;
     }
     private static Properties setDevProperties(Properties props, String DBName){
-        props.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/"+ DBName);
-        props.put("hibernate.connection.username", "postgres");
-        props.put("hibernate.connection.password", "postgres");
+        props.put("hibernate.connection.url", "jdbc:postgresql://161.35.199.83:5432/" + DBName);
+        props.put("hibernate.connection.username", "sandram"); // Replace with the DB user you created
+        props.put("hibernate.connection.password", "yourpassword"); // Replace with the password you set
         return props;
     }
     private static Properties setTestProperties(Properties props){
