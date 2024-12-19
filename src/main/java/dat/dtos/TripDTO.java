@@ -3,12 +3,9 @@ package dat.dtos;
 import dat.entities.Guide;
 import dat.entities.Trip;
 import dat.enums.Category;
-import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 public class TripDTO {
 
     private Long id;
@@ -42,5 +39,37 @@ public class TripDTO {
         this.price = trip.getPrice();
         this.category = trip.getCategory();
         this.guideId = (trip.getGuide() != null) ? trip.getGuide().getId() : null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getStarttime() {
+        return starttime;
+    }
+
+    public LocalDateTime getEndtime() {
+        return endtime;
+    }
+
+    public String getStartposition() {
+        return startposition;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Long getGuideId() {
+        return guideId;
     }
 }

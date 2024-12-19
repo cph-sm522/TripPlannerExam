@@ -54,4 +54,67 @@ public class Trip {
 
     public Trip() {}
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getStarttime() {
+        return starttime;
+    }
+
+    public void setStarttime(LocalDateTime starttime) {
+        this.starttime = starttime;
+    }
+
+    public LocalDateTime getEndtime() {
+        return endtime;
+    }
+
+    public void setEndtime(LocalDateTime endtime) {
+        this.endtime = endtime;
+    }
+
+    public String getStartposition() {
+        return startposition;
+    }
+
+    public void setStartposition(String startposition) {
+        this.startposition = startposition;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Guide getGuide() {
+        return guide;
+    }
+
+    public void setGuide(Guide guide) {
+        this.guide = guide;
+    }
 }
