@@ -1,15 +1,12 @@
 package dat.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "guide")
 public class Guide {
@@ -26,4 +23,16 @@ public class Guide {
 
     @OneToMany(mappedBy = "guide")
     private List<Trip> trips;
+
+    public Guide() {}
+
+    public Guide(Long id, String firstname, String lastname, String email, String phone, int yearsOfExperience, List<Trip> trips) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.phone = phone;
+        this.yearsOfExperience = yearsOfExperience;
+        this.trips = trips;
+    }
 }

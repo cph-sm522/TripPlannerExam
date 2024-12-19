@@ -1,16 +1,14 @@
 package dat.dtos;
 
+import dat.entities.Guide;
 import dat.entities.Trip;
 import dat.enums.Category;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class TripDTO {
 
     private Long id;
@@ -21,6 +19,19 @@ public class TripDTO {
     private double price;
     private Category category;
     private Long guideId;
+
+    public TripDTO(Long id, LocalDateTime starttime, LocalDateTime endtime, String startposition, String name, double price, Category category, Long guideId) {
+        this.id = id;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.startposition = startposition;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.guideId = guideId;
+    }
+
+    public TripDTO() {}
 
     public TripDTO(Trip trip) {
         this.id = trip.getId();

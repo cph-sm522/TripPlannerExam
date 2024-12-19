@@ -18,7 +18,6 @@ import java.util.Set;
 @NamedQueries(@NamedQuery(name = "User.deleteAllRows", query = "DELETE from User"))
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class User implements Serializable, ISecurityUser {
@@ -79,6 +78,20 @@ public class User implements Serializable, ISecurityUser {
                     roles.remove(role);
                     role.getUsers().remove(this);
                 });
+    }
+
+    public User() {}
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 }
 

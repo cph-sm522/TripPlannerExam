@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "trip")
 public class Trip {
@@ -42,4 +40,18 @@ public class Trip {
         this.price = tripDTO.getPrice();
         this.category = tripDTO.getCategory();
     }
+
+    public Trip(Long id, LocalDateTime starttime, LocalDateTime endtime, String startposition, String name, double price, Category category, Guide guide) {
+        this.id = id;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.startposition = startposition;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.guide = guide;
+    }
+
+    public Trip() {}
+
 }
