@@ -1,12 +1,14 @@
-name: Build and Deploy
-on:
+  name: Build and Deploy
+
+  on:
   push:
     branches:
       - main
   pull_request:
     branches:
       - main
-jobs:
+
+  jobs:
   build:
     runs-on: ubuntu-latest
     steps:name: Build and Deploy
@@ -60,8 +62,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/TripPlannerExam .
-         docker push ${{ secrets.DOCKERHUB_USERNAME }}/TripPlannerExam
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/TripPlannerExam .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/TripPlannerExam
 
       - name: Deploy to Server
         run: |
